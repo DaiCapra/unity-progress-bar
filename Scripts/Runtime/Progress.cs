@@ -28,11 +28,17 @@ namespace ProgressBar.Scripts.Runtime
             UpdatePredictionSprite();
         }
 
+
         public void SetFill(float value)
         {
             value = Mathf.Clamp01(value);
             fill = value;
             UpdateFillSprite();
+        }
+
+        public bool IsAnimating()
+        {
+            return fill < prediction;
         }
 
         private void SetPrediction(float value)
