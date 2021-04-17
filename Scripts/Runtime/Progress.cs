@@ -8,10 +8,12 @@ namespace ProgressBar.Scripts.Runtime
     [ExecuteInEditMode]
     public class Progress : MonoBehaviour
     {
-        [Header("Values")] [SerializeField] [Range(0f, 1f)]
-        private float fill = 1f;
+        public float Value => value;
 
-        [SerializeField] [Range(0f, 1f)] private float prediction = 1f;
+        [Header("Values")] [SerializeField] [Range(0f, 1f)]
+        private float value = 1f;
+
+        [SerializeField] [Range(0f, 1f)] private float delayValue = 1f;
 
         [Header("Behaviour")] [SerializeField] private float speed = 1f;
         [SerializeField] private float delay = 0.5f;
@@ -22,53 +24,24 @@ namespace ProgressBar.Scripts.Runtime
 
         private float _elapsedFill;
 
-        private void OnValidate()
-        {
-            UpdateFillSprite();
-            UpdatePredictionSprite();
-        }
 
+        public bool IsAnimating()
+        {
+            return value < delayValue;
+        }
 
         public void SetFill(float value)
         {
             value = Mathf.Clamp01(value);
-            fill = value;
-            UpdateFillSprite();
-        }
-
-        public bool IsAnimating()
-        {
-            return fill < prediction;
-        }
-
-        private void SetPrediction(float value)
-        {
-            value = Mathf.Clamp01(value);
-            prediction = value;
-            UpdatePredictionSprite();
-        }
-
-        private void UpdateFillSprite()
-        {
-            if (imgFill != null)
-            {
-                imgFill.fillAmount = fill;
-            }
-        }
-
-        private void UpdatePredictionSprite()
-        {
-            if (imgPrediction != null)
-            {
-                imgPrediction.fillAmount = prediction;
-            }
+            this.value = value;
+            UpdateValueSprite();
         }
 
         public void Update()
         {
-            if (prediction <= fill)
+            if (delayValue <= value)
             {
-                SetPrediction(fill);
+                SetDelayValue(value);
                 _elapsedFill = 0;
                 return;
             }
@@ -79,9 +52,39 @@ namespace ProgressBar.Scripts.Runtime
             }
             else
             {
-                var p = prediction - speed * Time.deltaTime;
-                p = Mathf.Max(fill, p);
-                SetPrediction(p);
+                var p = delayValue - speed * Time.deltaTime;
+                p = Mathf.Max(value, p);
+                SetDelayValue(p);
+            }
+        }
+
+        private void OnValidate()
+        {
+            UpdateValueSprite();
+            UpdateDelaySprite();
+        }
+
+
+        private void SetDelayValue(float value)
+        {
+            value = Mathf.Clamp01(value);
+            delayValue = value;
+            UpdateDelaySprite();
+        }
+
+        private void UpdateValueSprite()
+        {
+            if (imgFill != null)
+            {
+                imgFill.fillAmount = value;
+            }
+        }
+
+        private void UpdateDelaySprite()
+        {
+            if (imgPrediction != null)
+            {
+                imgPrediction.fillAmount = delayValue;
             }
         }
     }
