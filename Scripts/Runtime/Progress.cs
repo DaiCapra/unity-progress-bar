@@ -8,8 +8,6 @@ namespace ProgressBar.Scripts.Runtime
     [ExecuteInEditMode]
     public class Progress : MonoBehaviour
     {
-        public float Value => value;
-
         [Header("Values")] [SerializeField] [Range(0f, 1f)]
         private float value = 1f;
 
@@ -23,19 +21,7 @@ namespace ProgressBar.Scripts.Runtime
         [SerializeField] private Image imgFill;
 
         private float _elapsedFill;
-
-
-        public bool IsAnimating()
-        {
-            return value < delayValue;
-        }
-
-        public void SetFill(float value)
-        {
-            value = Mathf.Clamp01(value);
-            this.value = value;
-            UpdateValueSprite();
-        }
+        public float Value => value;
 
         public void Update()
         {
@@ -64,6 +50,41 @@ namespace ProgressBar.Scripts.Runtime
             UpdateDelaySprite();
         }
 
+        public bool IsAnimating()
+        {
+            return value < delayValue;
+        }
+
+        public void SetFill(float value)
+        {
+            value = Mathf.Clamp01(value);
+            this.value = value;
+            UpdateValueSprite();
+        }
+
+        public void SetFillColor(Color color)
+        {
+            if (imgFill != null)
+            {
+                imgFill.color = color;
+            }
+        }
+
+        public void SetPredictionColor(Color color)
+        {
+            if (imgPrediction != null)
+            {
+                imgPrediction.color = color;
+            }
+        }
+
+        public void SetBackgroundColor(Color color)
+        {
+            if (imgBackground != null)
+            {
+                imgBackground.color = color;
+            }
+        }
 
         private void SetDelayValue(float value)
         {
